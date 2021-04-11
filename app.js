@@ -165,19 +165,52 @@ function fetchComments($id) {
 function setComment($id) {
 
     //TODO complete implementation using the product id
-    alert("app.js/setComment() not implemented")
+    //alert("app.js/setComment() not implemented")
 
     //HINT
     //Take note of how the Ajax call in app.js/fetchComments() posts a GET request to corresponding API endpoint.
     //Look at the Microservice API Documentation and find out the appripriate type of request for this action.
+    let comment = $.trim($('#message-text').val());
+    let score = $.trim($('#score').val());
+    console.log(comment);
+
+    $.ajax({
+        url: Url+'SetComment', //API url
+        type: 'post', //type of request
+        dataType: 'json', //dataType, which is json for this lab.
+        contentType: 'text/plain', //contentType, which is text/plain since json is sent as plain text.
+        data: JSON.stringify({"product_id":$id, "comment":comment, "score":score}),
+        success: function (data) {
+            alert("Success!");
+        },
+        error: function (data) {
+            alert("Error!");
+        }
+        
+    });
 
 }
 
 function addToCart($id) {
 
     //TODO complete implementation using the product id
-    alert("app.js/addToCart() not implemented")
+    //alert("app.js/addToCart() not implemented")
+    let email =$.trim($('#email').val()); 
 
+    $.ajax({
+        url: Url+'AddToCart', //API url
+        type: 'post', //type of request
+        dataType: 'json', //dataType, which is json for this lab.
+        contentType: 'text/plain', //contentType, which is text/plain since json is sent as plain text.
+        data: JSON.stringify({"product_id":$id, "email":email}),
+        success: function (data) {
+            alert("Success!");
+        },
+        error: function (data) {
+            alert("Error!");
+        }
+        
+    });
 
 }
 
