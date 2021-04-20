@@ -12,6 +12,7 @@ function fetchProductList() {
     !($.trim($('#min_price').val()) == '') ? item ["price_from"] = $('#min_price').val(): '';
     !($.trim($('#max_price').val()) == '') ? item ["price_to"] = $('#max_price').val(): '';
 
+
     jsonObj.push(item);
 
     //jQuery Ajax request
@@ -64,6 +65,7 @@ function fetchProductList() {
 
 function fetchOneProduct($id) {
     var product;
+    var avg = getAverageScore($id);
 
     //jQuery Ajax request
     $.ajax({
@@ -114,6 +116,9 @@ function fetchOneProduct($id) {
 function fetchComments($id) {
     var comment;
     var commentAdd;
+    var sum = 0;
+    var count = 0;
+    var avg = 0;
 
     $.ajax({
         url: Url+'GetProductComment',
@@ -124,12 +129,19 @@ function fetchComments($id) {
 
         success: function (data) { //on success
             //reactive HTML that depends on the contents od the returned data
+            $.each(data['data']['List'], function(i, item) {
+                count+=1;
+                sum += item['score'];
+            });
+            if (count != 0) avg = sum / count;
+            else avg = 0;
+            if (avg > 5) avg = 5;
             comment='';
             comment='<div class="panel panel-default" style="width:800px">\n' +
                 '            <div class="panel-heading">\n' +
                 '                <span class="glyphicon glyphicon-comment"></span>\n' +
                 '                <h3 class="panel-title">\n' +
-                '                    Comments</h3>\n' +
+                '                    Comments:        Average user score: ' + avg + '</h3>\n' +
                 '            </div>\n' +
                 '            <div class="panel-body">\n' +
                 '                <ul class="list-group">\n';
@@ -160,6 +172,34 @@ function fetchComments($id) {
             alert("Error while fetching data.");
         }
     });
+}
+
+function getAverageScore($id) {
+    var sum = 0;
+    var count = 0;
+    var avg = 0;
+    
+    $.ajax({
+        url: Url+'GetProductComment',
+        type: 'get',
+        dataType: 'json',
+        data: {"product_id":$id}, //the json is defined here using javascript's dictionary syntax.
+        contentType: 'text/plain',
+        
+
+        success: function (data) { //on success
+            $.each(data['data']['List'], function(i, item) {
+                count+=1;
+                sum += item['score'];
+            });
+            if (count != 0) avg = sum / count;
+            else avg = 0;
+        },
+        error: function (data) { //on error, throw an alert
+            alert("Error while averaging scores.");
+        }
+    });
+
 }
 
 function setComment($id) {
